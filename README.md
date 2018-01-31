@@ -1,3 +1,21 @@
+Goal
+----
+
+Here you will find the original code from Dmitry Denisenko which is used 
+in many Altera OpenCL PCIe accelerators, like the Terasic DE5Net that I'm 
+currently using.
+
+The original code supports [conservative] systems based on Centos6/7 OS with
+"old" kernels like 3.8.
+
+I try to adapt it to my system which is currently using Ubuntu 17.10 with kernel 4.13
+
+This needs some tricky minor changes.
+
+I use conditional compilation to make it kernel version independent.
+
+
+
 Altera OpenCL PCI Express Driver for Linux
 ------------------------------------------
 
@@ -55,7 +73,7 @@ Also tested on CentOS 6.4, 64-bit with 2.6.32-358.el6.x86_64 kernel.
 
 FEEDBACK
 --------
-Issues, comments, enhancements? Contect Dmitry Denisenko at ddenisen@altera.com.
+Issues, comments, enhancements? Contect Dmitry Denisenko at ddenisen (at) altera.com.
 
 
 [1] Altera, Quartus, and Stratix are tradermarks of Altera Corporation.

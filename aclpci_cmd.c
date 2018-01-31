@@ -218,6 +218,7 @@ static void __aclpci_release_user_pages(struct page **p, size_t num_pages,
 // so go to the more complete function. I get some inspiration from 
 // http://elixir.free-electrons.com/linux/v4.6/source/mm/nommu.c#L162
 
+/*
 long get_user_pages_old_kernel(struct task_struct *tsk, struct mm_struct *mm,
 		    unsigned long start, unsigned long nr_pages,
 		    int write, int force, struct page **pages,
@@ -233,6 +234,7 @@ long get_user_pages_old_kernel(struct task_struct *tsk, struct mm_struct *mm,
 	return get_user_pages(start, nr_pages, flags,
 				pages, vmas);
 }
+*/
 
 /* call with target_task->mm->mmap_sem held */
 static int __aclpci_get_user_pages(struct task_struct *target_task, unsigned long start_page, size_t num_pages,
@@ -244,23 +246,51 @@ static int __aclpci_get_user_pages(struct task_struct *target_task, unsigned lon
 	for (got = 0; got < num_pages; got += ret) 
 	{
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
-		ret = get_user_pages(target_task, target_task->mm,
-				     start_page + got * PAGE_SIZE,
-				     num_pages - got,
-				     1, 1,
-				     p + got, vma);
-#elif LINUX_VERSION_CODE < KERNEL_VERSION( 4,9,0)
+            // this is the original call. It works for kernels < 4.6
+            // the prototype for get_user_pages from 
+            // http://elixir.free-electrons.com/linux/v4.5/source/include/linux/mm.h#L1228
+/*
+            long get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+		    unsigned long start, unsigned long nr_pages,
+		    int write, int force, struct page **pages,
+		    struct vm_area_struct **vmas);
+*/
+            
+            ret = get_user_pages(target_task, target_task->mm,
+                                 start_page + got * PAGE_SIZE,
+                                 num_pages - got,
+                                 1, 1,
+                                 p + got, vma);
+#elif LINUX_VERSION_CODE < KERNEL_VERSION( 4,10,0)
+            // in newer kernels 4.6 <= X < 4.10 the remote function should be called
+            // the prototype for get_user_pages_remote from
+            // http://elixir.free-electrons.com/linux/v4.8/source/include/linux/mm.h#L1289
+/*
+            long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+			    unsigned long start, unsigned long nr_pages,
+			    int write, int force, struct page **pages,
+			    struct vm_area_struct **vmas);
+*/
 		ret = get_user_pages_remote(target_task, target_task->mm,
 					start_page + got * PAGE_SIZE,
 					num_pages - got,
 					1,1, p+got,
 					vma);
 #else
-		ret = get_user_pages_old_kernel(target_task, target_task->mm, 
-                                        start_page + got * PAGE_SIZE,
-                                        num_pages - got,
-                                        1, 1, 
-                                        p + got, vma);
+            // in kernels >= 4.10 get_user_pages_remote is using flags packed in a single int
+            // and locked pointer is mandatory
+            // the prototype for get_user_pages_remote from
+            // http://elixir.free-electrons.com/linux/v4.10/source/include/linux/mm.h#L1267
+/*
+long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+			    unsigned long start, unsigned long nr_pages,
+			    unsigned int gup_flags, struct page **pages,
+			    struct vm_area_struct **vmas, int *locked);
+*/
+		ret = get_user_pages_remote(target_task, target_task->mm, 
+                                        start_page + got * PAGE_SIZE, num_pages - got,
+                                        FOLL_WRITE | FOLL_FORCE, p + got,
+                                        vma, NULL);
 #endif
 		if (ret < 0)
 			goto bail_release;

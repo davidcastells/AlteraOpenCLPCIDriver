@@ -245,7 +245,14 @@ static int __aclpci_get_user_pages(struct task_struct *target_task, unsigned lon
 
 	for (got = 0; got < num_pages; got += ret) 
 	{
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
+            // I tried this in Ubuntu 16.04 (kernel 4.4.208)
+	    ret = get_user_pages(target_task, target_task->mm, 
+				 start_page + got * PAGE_SIZE,
+				 num_pages - got,
+				 FOLL_WRITE | FOLL_FORCE, 
+				 p + got, vma);
+#elif LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
             // this is the original call. It works for kernels < 4.6
             // the prototype for get_user_pages from 
             // http://elixir.free-electrons.com/linux/v4.5/source/include/linux/mm.h#L1228

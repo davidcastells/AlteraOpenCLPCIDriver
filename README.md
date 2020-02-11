@@ -2,13 +2,13 @@ Goal
 ----
 
 Here you will find the original code from Dmitry Denisenko which is used 
-in many Altera OpenCL PCIe accelerators, like the Terasic DE5Net that I'm 
-currently using.
+in many Altera OpenCL PCIe accelerators, like the Terasic DE5Net and Terasic OpenVino starter kit
+that I'm currently using.
 
 The original code supports [conservative] systems based on Centos6/7 OS with
 "old" kernels like 3.8.
 
-I try to adapt it to my system which is currently using Ubuntu 17.10 with kernel 4.13
+I try to adapt it to my systems running Ubuntu with various versions. Check testing section below.
 
 This needs some tricky minor changes.
 
@@ -68,13 +68,28 @@ TESTING
 The driver was developed and tested on CentOS 5.6, 64-bit with 
 2.6.18-238.el5 kernel compiled for x86_64 architecture.
 
-Also tested on CentOS 6.4, 64-bit with 2.6.32-358.el6.x86_64 kernel.
+
+Also tested on 
+
+CentOS 6.4, 64-bit with kernel 2.6.32-358.el6.x86_64
+
+Ubuntu 16.04.6 with kernel 4.4.0-173
+
+Ubuntu 16.04.6 with kernel 4.15.0-76
+
+Ubuntu 17.10 with kernel 4.13
 
 
 FEEDBACK
 --------
-Issues, comments, enhancements? Contect Dmitry Denisenko at ddenisen (at) altera.com.
+Issues, comments, enhancements? 
+Contact David Castells-Rufas david.castells@uab.cat or...
+
+(the orginal author) Dmitry Denisenko at ddenisen (at) altera.com.
 
 
+REFERENCES
+----------
 [1] Altera, Quartus, and Stratix are tradermarks of Altera Corporation.
+
 [2] OpenCL and the OpenCL logo are trademarks of Apple Inc.

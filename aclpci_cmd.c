@@ -170,6 +170,13 @@ ssize_t aclpci_exec_cmd (struct aclpci_dev *aclpci,
     result = copy_to_user ( kcmd.user_addr, buf, strlen(ACL_BOARD_PKG_NAME)+strlen(ACL_DRIVER_VERSION)+2 );
     break;
   }
+		  
+  case ACLPCI_CMD_GET_PCI_DEV_ID: {
+    u32 dev_id = aclpci->pci_dev->device;
+    result = copy_to_user ( kcmd.user_addr, &dev_id, sizeof(dev_id) );
+    break;
+  }
+
 
   case ACLPCI_CMD_GET_PCI_SLOT_INFO: {
     /* PCI slot info (bus:slot.func) is a string with format "%02x:%02x.%02x" */

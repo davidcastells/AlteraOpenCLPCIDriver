@@ -17,9 +17,10 @@ I use conditional compilation to make it kernel version independent.
 I'm currently using Ubuntu 20.04.4 LTS with a 5.4.0-113-generic kernel.
 
 To check your system details run:
+<pre>
 $lsb_release -d
 $uname -r
-
+</pre>
 
 
 Altera OpenCL PCI Express Driver for Linux

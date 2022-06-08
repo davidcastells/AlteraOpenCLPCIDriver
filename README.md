@@ -86,6 +86,7 @@ Ubuntu 16.04.6 with kernel 4.15.0-76
 
 Ubuntu 17.10 with kernel 4.13
 
+Ubuntu 20.04.4 with kernel 5.4.0-113
 
 FEEDBACK
 --------

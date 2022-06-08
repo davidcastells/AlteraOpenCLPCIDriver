@@ -43,6 +43,9 @@
 
 /* Top-level file for the driver.
  * Deal with device init and shutdown, BAR mapping, and interrupts. */
+/*
+* This includes some minor updates by David Castells-Rufas (dcr)
+*/
 
 #include "aclpci.h"
 #include <asm/siginfo.h>    //siginfo
@@ -50,7 +53,7 @@
 #include <linux/version.h>  //kernel_version
 
 
-MODULE_AUTHOR  ("Dmitry Denisenko");
+MODULE_AUTHOR  ("Dmitry Denisenko");	
 MODULE_DESCRIPTION ("Driver for Intel(R) OpenCL Acceleration Boards");
 MODULE_SUPPORTED_DEVICE ("Intel(R) OpenCL Boards");
 MODULE_LICENSE("GPL");
@@ -257,6 +260,7 @@ void mask_kernel_irq(struct aclpci_dev *aclpci){
   //forward without properly mask the irq.
   val = readl(get_interrupt_enable_addr(aclpci));
 }
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 19)
 irqreturn_t aclpci_irq (int irq, void *dev_id, struct pt_regs * not_used) {
 #else
@@ -334,8 +338,14 @@ void load_signal_info (struct aclpci_dev *aclpci) {
 
   /* Setup siginfo struct to send signal to user process. Doing it once here
    * so don't waste time inside the interrupt handler. */
+   // @dcr
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,20,0)
+  struct kernel_siginfo *info = &aclpci->signal_info;
+  memset(info, 0, sizeof(struct kernel_siginfo));
+#else
   struct siginfo *info = &aclpci->signal_info;
   memset(info, 0, sizeof(struct siginfo));
+#endif
   info->si_signo = SIG_INT_NOTIFY;
   /* this is bit of a trickery: SI_QUEUE is normally used by sigqueue from user
    * space,  and kernel space should use SI_KERNEL. But if SI_KERNEL is used the

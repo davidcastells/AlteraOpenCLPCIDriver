@@ -5,6 +5,8 @@ endif
 
 EXTRA_CFLAGS += -I$(PWD)/../../include
 
+KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+
 # Final module
 obj-m := aclpci_drv.o
 

@@ -163,8 +163,14 @@ struct aclpci_dev {
 
 
   /* signal sending structs */
+  // @dcr
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,20,0)
+  struct kernel_siginfo signal_info;
+  struct kernel_siginfo signal_info_dma;
+#else
   struct siginfo signal_info;
   struct siginfo signal_info_dma;
+#endif
   struct task_struct *user_task;
   int user_filehandle;
 
